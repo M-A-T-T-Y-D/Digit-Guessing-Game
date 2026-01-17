@@ -13,6 +13,18 @@ public static class Game
     public static Stopwatch TotalTime = new Stopwatch();
     public static List<int> IncorrectNumbers = new List<int>();
     static Random rnd = new Random();
+
+    /// <summary>
+    /// This code adds the users statistics to the leaderboard file
+    /// Then calls the function in the LeaderboardEntry class
+    /// called SortLeaderboard()
+    /// </summary>
+    /// <remarks>
+    /// The projectRoot is collected to force the Leaderboard file to be created
+    /// within the same folder as the game file is.
+    /// this is to prevent other sections of the code from being able to acess it.
+    /// The code then writes a new line containing the users statistics using streamwriter
+    /// </remarks>
     public static void AddToLeaderboard()
     {
         string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
@@ -24,8 +36,19 @@ public static class Game
         }
         LeaderboardEntry.SortLeaderboard();
     }
+
+
+    /// <summary>
+    /// This is the logic behind picking a number to reveal 
+    /// to the user when they request a hint
+    /// </summary>
+    /// <remarks>
+    /// The number given in the hint is always randomly selected
+    /// The games Turn number is incremented
+    /// </remarks>
     public static void RequestHint()
     {
+        
         Console.WriteLine("\n\n---Hint---\n\n");
         int NumberHint = Generated[rnd.Next(0, Generated.Count)];
         Console.WriteLine($"The number {NumberHint} is used in the code");
@@ -34,6 +57,17 @@ public static class Game
 
     }
 
+    /// <summary>
+    /// This function resets objects to their origional
+    /// state then restarts the game
+    /// </summary>
+    /// <remarks>
+    /// This function questions wether the user wants to go
+    /// back to the menu, if the user selects yes, it resets
+    /// objects in the class to their pre game state so they
+    /// can be reset. it then calls the subsequent functions 
+    /// to start a new game
+    /// </remarks>
     public static void RestartGame()
     {
         while (true)
@@ -64,6 +98,19 @@ public static class Game
         }
         
     }
+    /// <summary>
+    /// This function forces the end of the game when either the turn hits
+    /// 10, the user guesses correctly or the user wants to quit.
+    /// </summary>
+    /// <remarks>
+    /// This function outputs different game over screens depending on the result
+    /// it outputs the correct code by using a for loop to convert a List into
+    /// a string, then outputs the time taken, wether a hint has been used
+    /// the amount of turns left, then questions the user on a win if they
+    /// want to submit their score to the leaderboard.
+    /// the user will then be prompted if they want to return to the menu
+    /// by calling RestartGame()
+    /// </remarks>
     public static void EndGame()
     {
         Console.WriteLine("\n\n---Game Over---\n\n");
@@ -124,6 +171,21 @@ public static class Game
         }
 
     }
+    /// <summary>
+    /// Compares the users guess against the generated code and calculates
+    /// the number of bulls and cows
+    /// </summary>
+    /// <param name="userGuess">
+    /// A list of integers representing the users guessed digits
+    /// </param>
+    /// <remarks>
+    /// Bulls are counted when a digit is correct and in the correct position.
+    /// Cows are counted when a digit is correct in the wrong position.
+    /// Incorrect digits are stored to assist the player in future turns.
+    /// The 2 boolean lists are used so the code doesnt run for digits
+    /// that have already been assigned, and are then used to identify incorrect
+    /// numbers to be assigned to the class list
+    /// </remarks>
     public static void CompareGuess(List<int> userGuess)
     {
         int bulls = 0;
@@ -190,6 +252,18 @@ public static class Game
         }
         Console.WriteLine($"\n\nBulls: {bulls}\n\nCows: {cows}");
     }
+    /// <summary>
+    /// Handles a single user turn by requesting input and validating it,
+    /// enforcing time limits and processing special commands
+    /// </summary>
+    /// <returns>
+    /// A list of integers representing a valid user guess
+    /// </returns>
+    /// <remarks>
+    /// The user has 45 seconds to enter a guess otherwise the turn is invalidated
+    /// Special commands include "hint" and "quit".
+    /// Invalid inputs result in a loss of a turn.
+    /// </remarks>
     public static List<int> UsersTurn()
     {
         while (true)
@@ -280,6 +354,15 @@ public static class Game
         }
         
     }
+
+    /// <summary>
+    /// This function starts the game by starting the timer, resetting the
+    /// win checker.
+    /// </summary>
+    /// <remarks>
+    /// The code always checks if the user is below 10 turns.
+    /// Creates a win result if the user guesses correctly.
+    /// </remarks>
     public static void GameStart()
     {
         Console.WriteLine("\n\nGame Starting\n\n");
@@ -317,6 +400,14 @@ public static class Game
         }
         
     }
+    /// <summary>
+    /// Generates the secret code based on the selected code length.
+    /// </summary>
+    /// <remarks>
+    /// In normal mode all the digits will be unique.
+    /// In hard mode, duplicated digits are allowed.
+    /// The generated code is stored in a class list.
+    /// </remarks>
     public static void Generator()
     {
         List<int> digits = new List<int>();
@@ -343,6 +434,13 @@ public static class Game
             Generated = digits;
         }
     }
+    /// <summary>
+    /// This function forces the user to create an allias 
+    /// before the game can start
+    /// </summary>
+    /// <remarks>
+    /// The name cannot be whitespaces or null otherwise its rejected
+    /// </remarks>
     public static void SetName()
     {
         string nameCheck;
@@ -377,6 +475,13 @@ public static class Game
             SetName();
         }
     }
+    /// <summary>
+    /// The main menu for the game.
+    /// </summary>
+    /// <remarks>
+    /// Does not allow the user to write anything but intergers.
+    /// Will result in invalid if an option not on the list is selected.
+    /// </remarks>
     public static void MainMenu()
     {
         
@@ -433,6 +538,12 @@ public static class Game
         }
         
     }
+    /// <summary>
+    /// Forces the player to pick a game version.
+    /// </summary>
+    /// <remarks>
+    /// Forces any wrong inputs to be invalid.
+    /// </remarks>
     public static void GameVersion()
     {
         Console.WriteLine("What version of the game would you like to play?\n 1) 4 digit code\n 2) 5 digit code\n 3) 6 digit code");
@@ -477,6 +588,13 @@ public static class Game
         }
         
     }
+    /// <summary>
+    /// Allows the code to start running once the file is called.
+    /// </summary>
+    /// <remarks>
+    /// States the rules of the game with examples
+    /// then calls the functions needed to start the game.
+    /// </remakrs>
     public static void Main(string[] args)
     {
         // Welcome message + rules
@@ -497,6 +615,17 @@ public class LeaderboardEntry
     public int Turn;
     static string projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
     static string path =Path.Combine(projectRoot, "Leaderboard.txt");
+    /// <summary>
+    /// Loads all leaderboard entries from the leaderboard file
+    /// </summary>
+    /// <returns>
+    /// A list of LeaderboardEntry objects containing
+    /// all saved leaderboard data
+    /// </returns>
+    /// <remarks>
+    /// If the leaderboard file doesnt exist it creates one, an empty list gets returned.
+    /// Each line in the file is a new entry
+    /// </remarks>
     public static List<LeaderboardEntry> LoadLeaderboard()
     {
         if (!File.Exists(path))
@@ -527,6 +656,17 @@ public class LeaderboardEntry
 
         return entries;
     }
+
+    /// <summary>
+    /// Saves the provided leaderboard entries to the file.
+    /// </summary>
+    /// <param name="entries">
+    /// A list of Leaderboard entries to be written to the file
+    /// </param>
+    /// <remarks>
+    /// Existing leaderboard data is overwritten.
+    /// each entry is saved in csv format.
+    /// </remarks>
     public static void SaveLeaderboard(List<LeaderboardEntry> entries)
     {
         if (!File.Exists(path))
@@ -542,6 +682,17 @@ public class LeaderboardEntry
             }
         }
     }
+
+    /// <summary>
+    /// Sorts all leaderboard entries by their time taken in ascending order.
+    /// </summary>
+    /// <param name="entries">
+    /// A list of leaderboard entries to be sorted.
+    /// </param>
+    /// <remarks>
+    /// A bubble sort algorithm is used to arrange entries
+    /// in ascending order so that fastest completion time appears first.
+    /// </remarks>
     public static void SortByTime(List<LeaderboardEntry> entries)
     {
         for(int i = 0; i < entries.Count - 1; i++)
@@ -558,6 +709,14 @@ public class LeaderboardEntry
         }
 
     }
+
+    /// <summary>
+    /// Loads, sorts and saves the leaderboard entries.
+    /// </summary>
+    /// <remarks>
+    /// The leaderboard is sorted by time taken then saved back to the file.
+    /// After sorting, the user is returned to the main menu.
+    /// </remarks>
     public static void SortLeaderboard()
     {
         List<LeaderboardEntry> entries = LoadLeaderboard();
@@ -569,7 +728,13 @@ public class LeaderboardEntry
         Console.WriteLine("Leaderboard Sorted");
         Game.RestartGame();
     }
-
+    /// <summary>
+    /// Displays all leaderboard entries to the console.
+    /// </summary>
+    /// <remarks>
+    /// Entries have been sored previously so are in order.
+    /// All stored data for each entry is output.
+    /// </remarks>
     public static void ViewLeaderboard()
     {
         List<LeaderboardEntry> entries = LoadLeaderboard();
