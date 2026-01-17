@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
 
 public static class Game
 {
@@ -10,7 +11,7 @@ public static class Game
     public static string Difficulty;
     public static List<int> Generated;
     public static Stopwatch TotalTime = new Stopwatch();
-    public static List<int> incorrectNumbers = new List<int>();
+    public static List<int> IncorrectNumbers = new List<int>();
     static Random rnd = new Random();
     public static void AddToLeaderboard()
     {
@@ -38,12 +39,20 @@ public static class Game
         while (true)
         {
         Console.WriteLine("Would you like to go back to the menu? y/n");
-        string Restart = Console.ReadLine().ToLower();
-        if(Restart == "y")
+        string restart = Console.ReadLine().ToLower();
+        if(restart == "y")
         {
-                MainMenu();
+            Turn = 1;
+            Hint = false;
+            Result = false;
+            IncorrectNumbers.Clear();
+            TotalTime.Reset();
+            Generated.Clear();
+            MainMenu();
+            GameStart();
+            return;
         }
-        else if(Restart == "n")
+        else if(restart == "n")
         {
             Console.WriteLine("---Goodbye---");
             Environment.Exit(0);
@@ -68,12 +77,12 @@ public static class Game
                 Console.WriteLine($"You still had {Turn} Turns left");
             }
             Console.WriteLine($"You took {TotalTime.Elapsed.TotalSeconds} Seconds");
-            string Code = "";
+            string code = "";
             for(int i = 0; i < Generated.Count; i++)
             {
-                Code += Generated[i];
+                code += Generated[i];
             }
-            Console.WriteLine($"The Correct Code was:{Code}");
+            Console.WriteLine($"The Correct Code was:{code}");
             RestartGame();
             
         }
@@ -115,19 +124,19 @@ public static class Game
         }
 
     }
-    public static void CompareGuess(List<int> UserGuess)
+    public static void CompareGuess(List<int> userGuess)
     {
-        int Bulls = 0;
-        int Cows = 0;
+        int bulls = 0;
+        int cows = 0;
 
         bool[] usedGenerated = new bool[Length];
         bool[] usedGuess = new bool[Length];
 
         for (int i = 0; i < Length; i++)
         {
-            if (UserGuess[i] == Generated[i])
+            if (userGuess[i] == Generated[i])
             {
-                Bulls++;
+                bulls++;
                 usedGenerated[i] = true;
                 usedGuess[i] = true;
             }
@@ -141,9 +150,9 @@ public static class Game
             }
             for(int j = 0; j < Length; j++)
             {
-                if( !usedGenerated[j] && UserGuess[i] == Generated[j])
+                if( !usedGenerated[j] && userGuess[i] == Generated[j])
                 {
-                    Cows++;
+                    cows++;
                     usedGenerated[j] = true;
                     break;
                 }
@@ -155,7 +164,7 @@ public static class Game
 
             for(int j = 0; j < Length; j++)
             {
-                if(UserGuess[i] == Generated[j])
+                if(userGuess[i] == Generated[j])
                 {
                     foundInGenerated = true;
                     break;
@@ -165,9 +174,9 @@ public static class Game
             {
                 bool alreadyAdded = false;
 
-                for(int x = 0; x < incorrectNumbers.Count; x++)
+                for(int x = 0; x < IncorrectNumbers.Count; x++)
                 {
-                    if(incorrectNumbers[x] == UserGuess[i])
+                    if(IncorrectNumbers[x] == userGuess[i])
                     {
                         alreadyAdded = true;
                         break;
@@ -175,11 +184,11 @@ public static class Game
                 }
                 if (!alreadyAdded)
                 {
-                    incorrectNumbers.Add(UserGuess[i]);
+                    IncorrectNumbers.Add(userGuess[i]);
                 }
             }
         }
-        Console.WriteLine($"\n\nBulls: {Bulls}\n\nCows: {Cows}");
+        Console.WriteLine($"\n\nBulls: {bulls}\n\nCows: {cows}");
     }
     public static List<int> UsersTurn()
     {
@@ -191,9 +200,9 @@ public static class Game
             if(Turn != 1)
             {
                 Console.WriteLine("Heres a list of numbers you have tried that were incorrect:\n");
-                for(int i = 0; i < incorrectNumbers.Count; i++)
+                for(int i = 0; i < IncorrectNumbers.Count; i++)
                 {
-                    Console.Write($" {incorrectNumbers[i]} ");
+                    Console.Write($" {IncorrectNumbers[i]} ");
                 } 
             }
             Console.WriteLine($"\nPlease enter a {Length} digit guess (45 seconds):");
@@ -280,12 +289,12 @@ public static class Game
         while (!won)
         {
             if (Turn < 10){
-            List<int> UserGuess = UsersTurn();
-            CompareGuess(UserGuess);
+            List<int> userGuess = UsersTurn();
+            CompareGuess(userGuess);
             bool isCorrect = true;
             for(int i = 0; i < Length; i++)
                 {
-                    if(UserGuess[i] != Generated[i])
+                    if(userGuess[i] != Generated[i])
                     {
                         isCorrect = false;
                         break;
@@ -310,39 +319,39 @@ public static class Game
     }
     public static void Generator()
     {
-        List<int> Digits = new List<int>();
+        List<int> digits = new List<int>();
         if(Difficulty == "Normal")
         {
-            while(Digits.Count != Length)
+            while(digits.Count != Length)
             {
             int num = rnd.Next(0,10);
-            if (!Digits.Contains(num))
+            if (!digits.Contains(num))
             {
-                Digits.Add(num);
+                digits.Add(num);
             }
             }
-            Generated = Digits;
+            Generated = digits;
         }
         else if(Difficulty == "Hard")
         {
-            while(Digits.Count != Length)
+            while(digits.Count != Length)
             {
             int num = rnd.Next(0,10);
-            Digits.Add(num);
+            digits.Add(num);
             
             }
-            Generated = Digits;
+            Generated = digits;
         }
     }
     public static void SetName()
     {
-        string NameCheck = "";
+        string nameCheck;
         while (true)
         {
             Console.WriteLine("Please Enter a Name or Username for Leaderboard");
 
-            NameCheck = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(NameCheck))
+            nameCheck = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(nameCheck))
             {
             Console.WriteLine("You cant enter no name");
             }
@@ -351,11 +360,11 @@ public static class Game
                 break;
             }
         }
-        Console.WriteLine($"Are you sure you want to be known as {NameCheck}, y/n");
+        Console.WriteLine($"Are you sure you want to be known as {nameCheck}, y/n");
         string Input = Console.ReadLine().ToLower().Trim();
         if (Input == "y")
         {
-            Name = NameCheck;
+            Name = nameCheck;
             Console.WriteLine("Created Name Successfully");
         }
         else if (Input == "n")
@@ -371,49 +380,49 @@ public static class Game
     public static void MainMenu()
     {
         
-        bool Menu = true;
-        while(Menu == true)
+        bool menu = true;
+        while(menu == true)
         {
         Console.WriteLine("\n\nMain Menu\n Select an option:\n 1) Normal Mode\n 2) Hard Mode\n 3) Leaderboard\n 4) Quit");
-        int Input = 0;
+        int input;
         try
         {
-            Input = Convert.ToInt16(Console.ReadLine()); // Converts to Int 16 to save memory space
+            input = Convert.ToInt16(Console.ReadLine()); // Converts to Int 16 to save memory space
         }
         catch
         {
             Console.WriteLine("Invalid selection please try again");
             continue;
         }   
-        if(Input == 1)
+        if(input == 1)
         {
             Console.WriteLine("You Selected Normal Mode");
             Difficulty = "Normal";
             GameVersion();
-            Menu = false;
+            menu = false;
         }
-        else if(Input == 2)
+        else if(input == 2)
         {
             Console.WriteLine("You Selected Hard Mode");
             Difficulty = "Hard";
             GameVersion();
-            Menu = false;
+            menu = false;
         }
-        else if(Input == 3)
+        else if(input == 3)
         {
             Console.WriteLine("You Selected Leaderboard");
             LeaderboardEntry.ViewLeaderboard();
             Console.WriteLine("\nWould you like to return to the menu? y/n");
-            string UserInput = Console.ReadLine().ToLower();
-            if(UserInput == "n")
+            string userInput = Console.ReadLine().ToLower();
+            if(userInput == "n")
                 {
                     Console.WriteLine("--Goodbye--");
                     Environment.Exit(0);
                 }
         }
-        else if(Input == 4)
+        else if(input == 4)
         {
-            Menu = false;
+            menu = false;
             Environment.Exit(0);
             
         }
@@ -428,37 +437,37 @@ public static class Game
     {
         Console.WriteLine("What version of the game would you like to play?\n 1) 4 digit code\n 2) 5 digit code\n 3) 6 digit code");
         
-        bool Menu = true;
-        while(Menu == true)
+        bool menu = true;
+        while(menu == true)
         {
-            int Input = 0;
+            int input;
             try
             {
-                Input = Convert.ToInt16(Console.ReadLine()); // Converts to Int 16 to save memory space
+                input = Convert.ToInt16(Console.ReadLine()); // Converts to Int 16 to save memory space
             }
             catch
             {
                 Console.WriteLine("Invalid Selection, Please try again");
                 continue;
             }
-            if(Input == 1)
+            if(input == 1)
             {
                 Console.WriteLine("You Selected 4 Digit Code");
-                Menu = false;
+                menu = false;
                 Length = 4;
 
             }
-            else if(Input == 2)
+            else if(input == 2)
             {
                 
                 Console.WriteLine("You Selected 5 Digit Code");
-                Menu = false;
+                menu = false;
                 Length = 5;
             }
-            else if(Input == 3)
+            else if(input == 3)
             {
                 Console.WriteLine("You Selected 6 Digit Code");
-                Menu = false;
+                menu = false;
                 Length = 6;
             }
             else
@@ -490,6 +499,10 @@ public class LeaderboardEntry
     static string path =Path.Combine(projectRoot, "Leaderboard.txt");
     public static List<LeaderboardEntry> LoadLeaderboard()
     {
+        if (!File.Exists(path))
+        {
+            return new List<LeaderboardEntry>();
+        }
         List<LeaderboardEntry> entries = new List<LeaderboardEntry>();
         string[] lines = File.ReadAllLines(path);
         foreach (string line in lines)
@@ -561,13 +574,13 @@ public class LeaderboardEntry
     {
         List<LeaderboardEntry> entries = LoadLeaderboard();
         Console.WriteLine("   Name  Difficulty  Time  Hint  Turn");
-        int Num = 0;
+        int num = 0;
         using (StreamReader reader = new StreamReader(path, true))
         {
             foreach(LeaderboardEntry i in entries)
             {
-                Num++;
-                Console.WriteLine($"{Num}) {i.Name}  {i.Difficulty}  {i.TimeTaken}  {i.HintUsed}  {i.Turn}");
+                num++;
+                Console.WriteLine($"{num}) {i.Name}  {i.Difficulty}  {i.TimeTaken}  {i.HintUsed}  {i.Turn}");
             }
         }
     }
