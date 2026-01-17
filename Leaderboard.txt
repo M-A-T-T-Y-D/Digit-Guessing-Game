@@ -1,0 +1,3 @@
+matt,Normal,29.3899944,True,4
+pissdickron,Normal,67.080176,False,4
+connie,Normal,153.6034479,False,8
