@@ -594,7 +594,7 @@ public static class Game
     /// <remarks>
     /// States the rules of the game with examples
     /// then calls the functions needed to start the game.
-    /// </remakrs>
+    /// </remarks>
     public static void Main(string[] args)
     {
         // Welcome message + rules
@@ -623,7 +623,7 @@ public class LeaderboardEntry
     /// all saved leaderboard data
     /// </returns>
     /// <remarks>
-    /// If the leaderboard file doesnt exist it creates one, an empty list gets returned.
+    /// If the leaderboard file doesnt exist, an empty list gets returned.
     /// Each line in the file is a new entry
     /// </remarks>
     public static List<LeaderboardEntry> LoadLeaderboard()
